@@ -122,14 +122,14 @@ class HeavyDutyBot:
             try:
                 txt_clip = (TextClip(
                                 word.upper(), 
-                                fontsize=90, 
+                                fontsize=85,  # Reduzido para evitar corte
                                 color='#FFD700', 
-                                font='Arial-Black', 
+                                font='Arial',  # Fonte que suporta caracteres especiais
                                 stroke_color='black', 
                                 stroke_width=3,
-                                method='label'
+                                method='label'  # Método melhor para renderização
                             )
-                            .set_position(('center', 'center'))
+                            .set_position(('center', self.height * 0.75))  # 75% da altura (mais para cima)
                             .set_start(item['start'])
                             .set_duration(duration))
             except Exception as e:

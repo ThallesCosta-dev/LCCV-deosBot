@@ -154,27 +154,40 @@ class XTTSVideoBot:
         print("✨ Renderizando legendas dinâmicas...")
         clips = []
         
-        for item in word_data:
+        # Configurações robustas para legendas
+        caption_y = self.height - 150  # Posição absoluta: 150px do fundo
+        max_width = int(self.width * 0.9)  # 90% da largura máxima
+        
+        for i, item in enumerate(word_data):
             word = item['word']
             dur = item['end'] - item['start']
-            if dur < 0.1: dur = 0.1
+            if dur < 0.2: dur = 0.2  # Duração mínima para legibilidade
 
             try:
-                txt = (TextClip(
-                        text=word.upper(), 
-                        font_size=90, 
-                        color='#FFD700',  # Dourado como no HeavyDutyBot
-                        stroke_color='black', 
-                        stroke_width=3
-                       )
-                       .with_position(('center', self.height * 0.7))  # 70% da altura (para cima)
-                       .with_start(item['start'])
-                       .with_duration(dur))
-                clips.append(txt)
+                # Criar texto com configurações robustas
+                txt_clip = TextClip(
+                    text=word.upper(),
+                    font_size=45,  # Tamanho conservador
+                    color='white',  # Cor mais visível
+                    bg_color='black',  # Fundo para contraste
+                    stroke_color='yellow',  # Contorno amarelo
+                    stroke_width=1,
+                    size=(max_width, None)  # Largura máxima definida
+                )
+                
+                # Posicionamento absoluto para evitar cortes
+                txt_clip = txt_clip.with_position(('center', caption_y))
+                txt_clip = txt_clip.with_start(item['start'])
+                txt_clip = txt_clip.with_duration(dur)
+                
+                clips.append(txt_clip)
+                print(f"✓ Legenda {i+1}/{len(word_data)}: '{word}'")
+                
             except Exception as e:
                 print(f"⚠️ Erro ao criar texto: {e}. Pulando palavra '{word}'")
                 continue
                 
+        print(f"✅ {len(clips)} legendas criadas com sucesso!")
         return clips
 
     def run(self, script, query):
